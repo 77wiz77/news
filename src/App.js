@@ -1,5 +1,5 @@
 import './styles/App.css';
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import Counter from './components/Counter';
 import ClassCounter from './components/ClassCounter';
 import PostItem from './components/PostItem';
@@ -11,6 +11,8 @@ import MySelect from './components/UI/select/MySelect';
 import PostFilter from './components/PostFilter';
 import MyModal from './components/UI/modal/MyModal';
 import { usePosts } from './hooks/usePosts';
+import axios from 'axios';
+import PostService from './API/PostService';
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -22,6 +24,16 @@ function App() {
   // const [selectedSort, setSelectedSort] = useState(''); //выбор алгоритма сортировки
   // const [searchQuery, setSearchQuery] = useState('');
   // const bodyInputRef = useRef(); //для прямого доступа к DOM элементу
+
+  async function fetchPosts() {
+    const posts = await PostService.getAll();
+    console.log(posts);
+    setPosts(posts);
+  }
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
@@ -35,6 +47,7 @@ function App() {
 
   return (
     <div className='App'>
+      <button onClick={fetchPosts}>Get posts</button>
       <MyButton style={{ marginTop: 30 }} onClick={() => setModal(true)}>
         Создать пользователя
       </MyButton>
