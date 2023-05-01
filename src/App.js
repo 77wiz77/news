@@ -16,9 +16,10 @@ import PostService from './API/PostService';
 
 function App() {
   const [posts, setPosts] = useState([]);
-
   const [filter, setFilter] = useState({ sort: '', query: '' }); //вид сортировки и поисковый запрос
   const [modal, setModal] = useState(false);
+  const [isPostsLoading, setIsPostsLoading] = useState(false);
+
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
 
   // const [selectedSort, setSelectedSort] = useState(''); //выбор алгоритма сортировки
@@ -26,9 +27,13 @@ function App() {
   // const bodyInputRef = useRef(); //для прямого доступа к DOM элементу
 
   async function fetchPosts() {
-    const posts = await PostService.getAll();
-    console.log(posts);
-    setPosts(posts);
+    setIsPostsLoading(true);
+    setTimeout(async () => {
+      const posts = await PostService.getAll();
+      console.log(posts);
+      setPosts(posts);
+      setIsPostsLoading(false);
+    }, 1000);
   }
 
   useEffect(() => {
@@ -57,11 +62,15 @@ function App() {
 
       <hr style={{ margin: '15px 0' }} />
       <PostFilter filter={filter} setFilter={setFilter} />
-      <PostList
-        remove={removePost}
-        posts={sortedAndSearchedPosts}
-        title='Посты про JS'
-      />
+      {isPostsLoading ? (
+        <h1>Идет загрузка...</h1>
+      ) : (
+        <PostList
+          remove={removePost}
+          posts={sortedAndSearchedPosts}
+          title='Посты про JS'
+        />
+      )}
     </div>
   );
 }
