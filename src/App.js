@@ -14,28 +14,22 @@ import { usePosts } from './hooks/usePosts';
 import axios from 'axios';
 import PostService from './API/PostService';
 import MyLoader from './components/UI/loader/MyLoader';
+import { useFetching } from './hooks/useFetching';
 
 function App() {
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState({ sort: '', query: '' }); //вид сортировки и поисковый запрос
   const [modal, setModal] = useState(false);
-  const [isPostsLoading, setIsPostsLoading] = useState(false);
+  const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
+    const posts = await PostService.getAll();
+    setPosts(posts);
+  });
 
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
 
   // const [selectedSort, setSelectedSort] = useState(''); //выбор алгоритма сортировки
   // const [searchQuery, setSearchQuery] = useState('');
   // const bodyInputRef = useRef(); //для прямого доступа к DOM элементу
-
-  async function fetchPosts() {
-    setIsPostsLoading(true);
-    setTimeout(async () => {
-      const posts = await PostService.getAll();
-      console.log(posts);
-      setPosts(posts);
-      setIsPostsLoading(false);
-    }, 1000);
-  }
 
   useEffect(() => {
     fetchPosts();
@@ -63,6 +57,8 @@ function App() {
 
       <hr style={{ margin: '15px 0' }} />
       <PostFilter filter={filter} setFilter={setFilter} />
+
+      {postError && <h1>Произошла ошибка ${postError}</h1>}
       {isPostsLoading ? (
         <div
           style={{
