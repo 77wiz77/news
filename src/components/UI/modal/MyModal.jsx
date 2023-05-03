@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './MyModal.module.css';
+import { createPortal } from 'react-dom';
 
 const MyModal = ({ children, visible, setVisible }) => {
   //сам компонент не может контролировать свою видимость, это делает родителький компонент
@@ -9,8 +10,9 @@ const MyModal = ({ children, visible, setVisible }) => {
     rootClasses.push(styles.active);
   }
 
-  return (
+  return createPortal(
     // <div className={[styles.myModal, styles.active].join(' ')}>
+
     <div className={rootClasses.join(' ')} onClick={() => setVisible(false)}>
       {/* Соединить два класса через пробел */}
       <div
@@ -18,7 +20,8 @@ const MyModal = ({ children, visible, setVisible }) => {
         onClick={(e) => e.stopPropagation()}>
         {children}
       </div>
-    </div>
+    </div>,
+    document.getElementById('modal-root')
   );
 };
 

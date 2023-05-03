@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 export const useSortedPosts = (posts, sort) => {
   //новый отсортированный массив постов
   const sortedPosts = useMemo(() => {
-    console.log('sortedPosts');
+    // console.log('sortedPosts');
     if (sort) {
       return [...posts].sort(
         (a, b) => a[sort].localeCompare(b[sort])

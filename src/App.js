@@ -15,14 +15,23 @@ import axios from 'axios';
 import PostService from './API/PostService';
 import MyLoader from './components/UI/loader/MyLoader';
 import { useFetching } from './hooks/useFetching';
+import { getPageCount, getPagesArray } from './utils/pages';
 
 function App() {
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState({ sort: '', query: '' }); //вид сортировки и поисковый запрос
   const [modal, setModal] = useState(false);
+  const [totalPages, setTotalPages] = useState(0); //общее количество страниц
+  const [limit, setLimit] = useState(10); //постов на странице
+  const [page, setPage] = useState(1); //номер текущей страницы
+
+  let pagesArray = getPagesArray(totalPages); //кнопки для переключения страниц
+
   const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
-    const posts = await PostService.getAll();
-    setPosts(posts);
+    const response = await PostService.getAll(limit, page); //получаем ответ
+    setPosts(response.data);
+    const totalCount = response.headers['x-total-count'];
+    setTotalPages(getPageCount(totalCount, limit));
   });
 
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
@@ -33,7 +42,7 @@ function App() {
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [page]);
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
@@ -45,12 +54,18 @@ function App() {
     setPosts(posts.filter((p) => p.id !== post.id));
   };
 
+  const changePage = (page) => {
+    //функция для изменения страницы
+    setPage(page);
+  };
+
   return (
     <div className='App'>
       <button onClick={fetchPosts}>Get posts</button>
       <MyButton style={{ marginTop: 30 }} onClick={() => setModal(true)}>
         Создать пользователя
       </MyButton>
+
       <MyModal visible={modal} setVisible={setModal}>
         <PostForm create={createPost} />
       </MyModal>
@@ -75,6 +90,16 @@ function App() {
           title='Посты про JS'
         />
       )}
+      <div className='page__wrapper'>
+        {pagesArray.map((p) => (
+          <span
+            onClick={() => changePage(p)}
+            key={p}
+            className={page === p ? 'page page__current' : 'page'}>
+            {p}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
