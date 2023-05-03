@@ -16,6 +16,7 @@ import PostService from './API/PostService';
 import MyLoader from './components/UI/loader/MyLoader';
 import { useFetching } from './hooks/useFetching';
 import { getPageCount, getPagesArray } from './utils/pages';
+import Pagination from './components/UI/pagination/Pagination';
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -25,44 +26,42 @@ function App() {
   const [limit, setLimit] = useState(10); //постов на странице
   const [page, setPage] = useState(1); //номер текущей страницы
 
-  let pagesArray = getPagesArray(totalPages); //кнопки для переключения страниц
-
   //первый способ пагинации через useEffect
-  const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
-    const response = await PostService.getAll(limit, page); //получаем ответ
-    setPosts(response.data);
-    const totalCount = response.headers['x-total-count'];
-    setTotalPages(getPageCount(totalCount, limit));
-  });
-
-  useEffect(() => {
-    fetchPosts();
-  }, [page]);
-
-  const changePage = (page) => {
-    //функция для изменения страницы
-    setPage(page);
-  };
-
-  //второй способ пагинации
-  // const [fetchPosts, isPostsLoading, postError] = useFetching(
-  //   async (limit, page) => {
-  //     const response = await PostService.getAll(limit, page); //получаем ответ
-  //     setPosts(response.data);
-  //     const totalCount = response.headers['x-total-count'];
-  //     setTotalPages(getPageCount(totalCount, limit));
-  //   }
-  // );
+  // const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
+  //   const response = await PostService.getAll(limit, page); //получаем ответ
+  //   setPosts(response.data);
+  //   const totalCount = response.headers['x-total-count'];
+  //   setTotalPages(getPageCount(totalCount, limit));
+  // });
 
   // useEffect(() => {
-  //   fetchPosts(limit, page);
-  // }, []);
+  //   fetchPosts();
+  // }, [page]);
 
   // const changePage = (page) => {
   //   //функция для изменения страницы
   //   setPage(page);
-  //   fetchPosts(limit, page);
   // };
+
+  //второй способ пагинации
+  const [fetchPosts, isPostsLoading, postError] = useFetching(
+    async (limit, page) => {
+      const response = await PostService.getAll(limit, page); //получаем ответ
+      setPosts(response.data);
+      const totalCount = response.headers['x-total-count'];
+      setTotalPages(getPageCount(totalCount, limit));
+    }
+  );
+
+  useEffect(() => {
+    fetchPosts(limit, page);
+  }, []);
+
+  const changePage = (page) => {
+    //функция для изменения страницы
+    setPage(page);
+    fetchPosts(limit, page);
+  };
 
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
 
@@ -111,16 +110,7 @@ function App() {
           title='Посты про JS'
         />
       )}
-      <div className='page__wrapper'>
-        {pagesArray.map((p) => (
-          <span
-            onClick={() => changePage(p)}
-            key={p}
-            className={page === p ? 'page page__current' : 'page'}>
-            {p}
-          </span>
-        ))}
-      </div>
+      <Pagination page={page} changePage={changePage} totalPages={totalPages} />
     </div>
   );
 }
