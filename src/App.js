@@ -27,22 +27,48 @@ function App() {
 
   let pagesArray = getPagesArray(totalPages); //кнопки для переключения страниц
 
-  const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
-    const response = await PostService.getAll(limit, page); //получаем ответ
-    setPosts(response.data);
-    const totalCount = response.headers['x-total-count'];
-    setTotalPages(getPageCount(totalCount, limit));
-  });
+  //первый способ пагинации через useEffect
+  // const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
+  //   const response = await PostService.getAll(limit, page); //получаем ответ
+  //   setPosts(response.data);
+  //   const totalCount = response.headers['x-total-count'];
+  //   setTotalPages(getPageCount(totalCount, limit));
+  // });
+
+  // useEffect(() => {
+  //   fetchPosts();
+  // }, [page]);
+
+  // const changePage = (page) => {
+  //   //функция для изменения страницы
+  //   setPage(page);
+  // };
+
+  //второй способ пагинации
+  const [fetchPosts, isPostsLoading, postError] = useFetching(
+    async (limit, page) => {
+      const response = await PostService.getAll(limit, page); //получаем ответ
+      setPosts(response.data);
+      const totalCount = response.headers['x-total-count'];
+      setTotalPages(getPageCount(totalCount, limit));
+    }
+  );
+
+  useEffect(() => {
+    fetchPosts(limit, page);
+  }, []);
+
+  const changePage = (page) => {
+    //функция для изменения страницы
+    setPage(page);
+    fetchPosts(limit, page);
+  };
 
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
 
   // const [selectedSort, setSelectedSort] = useState(''); //выбор алгоритма сортировки
   // const [searchQuery, setSearchQuery] = useState('');
   // const bodyInputRef = useRef(); //для прямого доступа к DOM элементу
-
-  useEffect(() => {
-    fetchPosts();
-  }, [page]);
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
@@ -52,11 +78,6 @@ function App() {
   const removePost = (post) => {
     //получаем пост из дочернего компонента
     setPosts(posts.filter((p) => p.id !== post.id));
-  };
-
-  const changePage = (page) => {
-    //функция для изменения страницы
-    setPage(page);
   };
 
   return (
