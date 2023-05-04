@@ -4,15 +4,25 @@ import Posts from '../pages/Posts';
 import About from '../pages/About';
 import ErrorPage from '../pages/ErrorPage';
 import PostIdPage from '../pages/PostIdPage';
+import { privateRoutes, publicRoutes } from '../router';
 
 const AppRouter = () => {
-  return (
+  const Auth = true;
+  return Auth ? (
     <Routes>
-      <Route path='/about' element={<About />} />
-      <Route exact path='/posts' element={<Posts />} />
-      <Route exact path='/posts/:id' element={<PostIdPage />} />
+      {privateRoutes.map((route) => (
+        <Route path={route.path} element={route.element} />
+      ))}
       <Route path='/error' element={<ErrorPage />} />
       <Route path='/*' element={<Navigate to='/posts' replace />} />
+    </Routes>
+  ) : (
+    <Routes>
+      {publicRoutes.map((route) => (
+        <Route path={route.path} element={route.element} />
+      ))}
+      <Route path='/error' element={<ErrorPage />} />
+      <Route path='/*' element={<Navigate to='/login' replace />} />
     </Routes>
   );
 };
