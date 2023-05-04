@@ -44,6 +44,10 @@
   transition: all 500ms ease-in;
 }
 
+.post__btns {
+  display: flex;
+}
+
 .page__wrapper {
   margin-top: 30px;
   margin-bottom: 30px;
