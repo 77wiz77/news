@@ -2,7 +2,7 @@ import './styles/App.css';
 import Navbar from './components/UI/navbar/Navbar';
 import AppRouter from './components/AppRouter';
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
 import { AuthContext } from './context';
 
 function App() {
@@ -18,12 +18,12 @@ function App() {
   return (
     // <AuthContext.Provider value={{ isAuth, setIsAuth: setIsAuth }}>
     <AuthContext.Provider value={{ isAuth, setIsAuth, isLoading }}>
-      <BrowserRouter>
+      <HashRouter>
         <div className='main'>
           <Navbar />
           <AppRouter />
         </div>
-      </BrowserRouter>
+      </HashRouter>
     </AuthContext.Provider>
   );
 }
