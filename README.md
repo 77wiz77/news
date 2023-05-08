@@ -1,7 +1,7 @@
 ## news
-## Пет-проект (Сайт с новостными постами)
+## Pet-project (News post website)
 
-### Стек: React, React-Context, CSS, Axios, React-Hooks, React-Router-Dom, React-Transition-Group
+### Stack: React, JS, React-Context, CSS modules, Axios, React-Hooks, React-Router-Dom, React-Transition-Group
 
-## Ссылка на деплой:
+## Deploy link:
 ## https://77wiz77.github.io/news/#/login
