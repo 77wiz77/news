@@ -7,7 +7,7 @@ const PostFilter = ({ filter, setFilter }) => {
     <div>
       <MyInput
         value={filter.query}
-        onChange={(e) => setFilter({ ...filter, query: e.target.value })} //возвращаем все поля и заменяем нужное
+        onChange={(e) => setFilter({ ...filter, query: e.target.value })}
         placeholder='Поиск...'></MyInput>
       <MySelect
         value={filter.sort}
@@ -18,7 +18,7 @@ const PostFilter = ({ filter, setFilter }) => {
         options={[
           { value: 'title', name: 'По названию' },
           { value: 'body', name: 'По описанию' },
-        ]} //массив опций
+        ]}
       />
     </div>
   );

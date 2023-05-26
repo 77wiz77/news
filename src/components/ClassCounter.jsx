@@ -12,11 +12,9 @@ class ClassCounter extends React.Component {
   }
 
   increment() {
-    // setCount(count + 1);
     this.setState({ count: this.state.count + 1 });
   }
   decrement() {
-    // setCount(count - 1);
     this.setState({ count: this.state.count - 1 });
   }
 

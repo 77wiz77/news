@@ -6,7 +6,6 @@ export default class PostService {
       'https://jsonplaceholder.typicode.com/posts',
       {
         params: {
-          //Чтобы axios сам подставил параметры в строку запроса
           _limit: limit,
           _page: page,
         },

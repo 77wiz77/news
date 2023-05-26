@@ -16,7 +16,6 @@ function App() {
   }, []);
 
   return (
-    // <AuthContext.Provider value={{ isAuth, setIsAuth: setIsAuth }}>
     <AuthContext.Provider value={{ isAuth, setIsAuth, isLoading }}>
       <HashRouter>
         <div className='main'>
